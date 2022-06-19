@@ -12,15 +12,8 @@ const server = http.createServer(async (request, response) => {
   const pathName = url.pathname;
 
   if (pathName === '/') {
-    let title: string;
-    let description: string;
-
-    if (searchParams.get('id') === null) {
-      description = 'Hello, Node.js';
-    } else {
-      description = await readFile(`./data/${searchParams.get('id')}`, 'utf-8');
-    }
-    title = getTitle(searchParams.get('id'));
+    const title = getTitle(searchParams.get('id'));
+    const description = await getDescription(searchParams.get('id'));
 
     const files = await readdir('./data/')
     const ul = createUlElement(files);
@@ -70,6 +63,22 @@ function createHtml(title: string, lists: string, description: string): string {
   return result;
 }
 
-function getTitle(queryStringId: string | null): string {
+type queryParam = string | null;
+
+function getTitle(queryStringId: queryParam): string {
   return queryStringId ?? 'Welcome';
+}
+
+async function getDescription(queryStringId: queryParam): Promise<string> {
+  let result = 'Hello, Node.js';
+
+  if (queryStringId !== null) {
+    try {
+      result = await readFile(`./data/${queryStringId}`, 'utf-8');
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  return result;
 }

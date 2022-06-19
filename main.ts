@@ -7,7 +7,7 @@ const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer(async (request, response) => {
-  const requestUrl = request.url || '/';
+  const requestUrl = request.url ?? '/';
   const queryData = url.parse(requestUrl, true).query;
   const pathName = url.parse(requestUrl, true).pathname;
 

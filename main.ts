@@ -16,12 +16,11 @@ const server = http.createServer(async (request, response) => {
     let description: string;
 
     if (searchParams.get('id') === null) {
-      title = 'Welcome';
       description = 'Hello, Node.js';
     } else {
-      title = searchParams.get('id') as string;
       description = await readFile(`./data/${searchParams.get('id')}`, 'utf-8');
     }
+    title = getTitle(searchParams.get('id'));
 
     const files = await readdir('./data/')
     const ul = createUlElement(files);
@@ -69,4 +68,8 @@ function createHtml(title: string, lists: string, description: string): string {
   `;
 
   return result;
+}
+
+function getTitle(queryStringId: string | null): string {
+  return queryStringId ?? 'Welcome';
 }

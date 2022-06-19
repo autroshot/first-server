@@ -3,7 +3,7 @@ import fs from 'fs';
 import { URL } from 'url';
 import { readFile, readdir } from 'node:fs/promises'
 
-const DOMAIN = '127.0.0.1';
+const DOMAIN = 'localhost';
 const PORT = 3000;
 
 const server = http.createServer(async (request, response) => {

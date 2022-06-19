@@ -3,8 +3,8 @@ import fs from 'fs';
 import { URL } from 'url';
 import { readFile, readdir } from 'node:fs/promises'
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const DOMAIN = '127.0.0.1';
+const PORT = 3000;
 
 const server = http.createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://localhost:3000`);
@@ -26,8 +26,8 @@ const server = http.createServer(async (request, response) => {
   }
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+server.listen(PORT, DOMAIN, () => {
+  console.log(`Server running at http://${DOMAIN}:${PORT}/`);
 });
 
 function createUlElement(arr: string[]): string {

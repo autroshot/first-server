@@ -25,10 +25,7 @@ const server = http.createServer(async (request, response) => {
     }
 
     const files = await readdir('./data/')
-    const lis = files.reduce((previousValue, currentValue) => {
-      return previousValue + `<li><a href="/?id=${currentValue}">${currentValue}</a></il>`;
-    }, '');
-    const list = `<ul>${lis}</ul>`;
+    const ul = createUlElement(files);
     
     const template = `
       <!doctype html>
@@ -39,7 +36,7 @@ const server = http.createServer(async (request, response) => {
       </head>
       <body>
         <h1><a href="/">WEB</a></h1>
-        ${list}
+        ${ul}
         <h2>${title}</h2>
         <p>${description}</p>
       </body>
@@ -57,3 +54,14 @@ const server = http.createServer(async (request, response) => {
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+function createUlElement(arr: string[]): string {
+  let result = '';
+
+  const lis = arr.reduce((previousValue, currentValue) => {
+    return previousValue + `<li><a href="/?id=${currentValue}">${currentValue}</a></il>`;
+  }, '');
+  result += `<ul>${lis}</ul>`;
+
+  return result;
+}

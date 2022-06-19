@@ -6,10 +6,10 @@ import util from 'util'
 const hostname = '127.0.0.1';
 const port = 3000;
 
-const server = http.createServer(async (req, res) => {
-  const _url = req.url as string;
-  const queryData = url.parse(_url, true).query;
-  const pathName = url.parse(_url, true).pathname;
+const server = http.createServer(async (request, response) => {
+  const requestUrl = request.url || '/';
+  const queryData = url.parse(requestUrl, true).query;
+  const pathName = url.parse(requestUrl, true).pathname;
 
   if (pathName === '/') {
     let title: string;
@@ -57,11 +57,11 @@ const server = http.createServer(async (req, res) => {
       });
       
     });
-    res.statusCode = 200;
-    res.end(outPut);
+    response.statusCode = 200;
+    response.end(outPut);
   } else {
-    res.statusCode = 404;
-    res.end('Not found');
+    response.statusCode = 404;
+    response.end('Not found');
   }
 });
 

@@ -1,27 +1,27 @@
 import http from 'http';
 import fs from 'fs';
-import url from 'url';
-import util from 'util'
+import { URL } from 'url';
+import util from 'util';
 
 const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer(async (request, response) => {
-  const requestUrl = request.url ?? '/';
-  const queryData = url.parse(requestUrl, true).query;
-  const pathName = url.parse(requestUrl, true).pathname;
+  const url = new URL(request.url ?? '/', `http://localhost:3000`);
+  const searchParams = url.searchParams;
+  const pathName = url.pathname;
 
   if (pathName === '/') {
     let title: string;
     let description: string;
 
-    if (queryData.id === undefined) {
+    if (searchParams.get('id') === null) {
       title = 'Welcome';
       description = 'Hello, Node.js';
     } else {
-      title = queryData.id as string;
+      title = searchParams.get('id') as string;
 
-      description = await new Promise((resolve) => {fs.readFile(`./data/${queryData.id}`, 'utf-8', (err, data) => {
+      description = await new Promise((resolve) => {fs.readFile(`./data/${searchParams.get('id')}`, 'utf-8', (err, data) => {
         if (err) throw err;
 
         resolve(data);

@@ -46,37 +46,6 @@ const server = http.createServer(async (request, response) => {
       </html>
     `;
 
-
-
-    // const outPut = await new Promise((resolve) => {
-    //   fs.readdir('./data/', (err, files) => {
-    //     if (err) throw err;
-  
-    //     const lis = files.reduce((previousValue, currentValue) => {
-    //       return previousValue + `<li><a href="/?id=${currentValue}">${currentValue}</a></il>`;
-    //     }, '');
-    //     const list = `<ul>${lis}</ul>`;
-        
-    //     const template = `
-    //       <!doctype html>
-    //       <html>
-    //       <head>
-    //         <title>WEB1 - ${title}</title>
-    //         <meta charset="utf-8">
-    //       </head>
-    //       <body>
-    //         <h1><a href="/">WEB</a></h1>
-    //         ${list}
-    //         <h2>${title}</h2>
-    //         <p>${description}</p>
-    //       </body>
-    //       </html>
-    //     `;
-
-    //     resolve(template);
-    //   });
-      
-    // });
     response.statusCode = 200;
     response.end(template);
   } else {

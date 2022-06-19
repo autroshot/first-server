@@ -1,7 +1,7 @@
 import http from 'http';
 import fs from 'fs';
 import { URL } from 'url';
-import util from 'util';
+import { readFile } from './src/promisify'
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -21,11 +21,7 @@ const server = http.createServer(async (request, response) => {
     } else {
       title = searchParams.get('id') as string;
 
-      description = await new Promise((resolve) => {fs.readFile(`./data/${searchParams.get('id')}`, 'utf-8', (err, data) => {
-        if (err) throw err;
-
-        resolve(data);
-      });})
+      description = await readFile(`./data/${searchParams.get('id')}`, 'utf-8');
     }
 
     const outPut = await new Promise((resolve) => {

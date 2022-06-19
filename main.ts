@@ -1,36 +1,34 @@
-const http = require('http');
-const fs = require('fs');
-const url = require('url');
-const { resolve } = require('path');
+import http from 'http';
+import fs from 'fs';
+import url from 'url';
+import util from 'util'
 
 const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer(async (req, res) => {
-  const _url = req.url;
+  const _url = req.url as string;
   const queryData = url.parse(_url, true).query;
   const pathName = url.parse(_url, true).pathname;
 
   if (pathName === '/') {
-    let title;
-    let description;
+    let title: string;
+    let description: string;
 
     if (queryData.id === undefined) {
       title = 'Welcome';
       description = 'Hello, Node.js';
     } else {
-      title = queryData.id;
+      title = queryData.id as string;
 
-      await new Promise((resolve) => {fs.readFile(`./data/${queryData.id}`, 'utf-8', (err, data) => {
+      description = await new Promise((resolve) => {fs.readFile(`./data/${queryData.id}`, 'utf-8', (err, data) => {
         if (err) throw err;
-        
-        description = data;
 
-        resolve();
+        resolve(data);
       });})
     }
 
-    await new Promise((resolve) => {
+    const outPut = await new Promise((resolve) => {
       fs.readdir('./data/', (err, files) => {
         if (err) throw err;
   
@@ -54,15 +52,13 @@ const server = http.createServer(async (req, res) => {
           </body>
           </html>
         `;
-    
-        res.statusCode = 200;
-        res.end(template);
 
-        resolve();
+        resolve(template);
       });
+      
     });
-    
-    
+    res.statusCode = 200;
+    res.end(outPut);
   } else {
     res.statusCode = 404;
     res.end('Not found');

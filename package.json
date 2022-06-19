@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "nodemon": "^2.0.16",
+    "ts-node": "^10.8.1"
+  },
+  "scripts": {
+    "dev": "nodemon --exec ts-node main.ts",
+    "copy-files": "cp -r src/public/ dist/public/ && cp -r src/views/ dist/views/",
+    "build": "tsc && npm run copy-files",
+    "start": "node dist/bin/www.js"
+  }
+}

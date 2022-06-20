@@ -3,6 +3,7 @@ import fs from 'fs';
 import { URL } from 'url';
 import { readFile, readdir } from 'node:fs/promises';
 import { articleHtml } from './src/articleHtml';
+import { formHtml } from './src/formHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -21,15 +22,14 @@ const server = http.createServer(async (request, response) => {
 
     response.statusCode = 200;
     response.end(articleHtml(title, ul, description));
-  } else if (pathName === '/create') {
-    const title = 'Web - create';
-    const description = await getDescription(searchParams.get('id'));
+  } else if (pathName === '/form') {
+    const title = 'WEB - create';
 
     const files = await readdir('./data/')
     const ul = createUlElement(files);
 
     response.statusCode = 404;
-    response.end(articleHtml(title, ul, description));
+    response.end(formHtml(title, ul));
   } else {
     response.statusCode = 404;
     response.end('Not found');

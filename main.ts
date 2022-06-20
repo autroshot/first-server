@@ -1,7 +1,8 @@
 import http from 'http';
 import fs from 'fs';
 import { URL } from 'url';
-import { readFile, readdir } from 'node:fs/promises'
+import { readFile, readdir } from 'node:fs/promises';
+import { articleHtml } from './src/articleHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -19,7 +20,16 @@ const server = http.createServer(async (request, response) => {
     const ul = createUlElement(files);
 
     response.statusCode = 200;
-    response.end(createHtml(title, ul, description));
+    response.end(articleHtml(title, ul, description));
+  } else if (pathName === '/create') {
+    const title = 'Web - create';
+    const description = await getDescription(searchParams.get('id'));
+
+    const files = await readdir('./data/')
+    const ul = createUlElement(files);
+
+    response.statusCode = 404;
+    response.end(articleHtml(title, ul, description));
   } else {
     response.statusCode = 404;
     response.end('Not found');
@@ -37,28 +47,6 @@ function createUlElement(arr: string[]): string {
     return previousValue + `<li><a href="/?id=${currentValue}">${currentValue}</a></il>`;
   }, '');
   result += `<ul>${lis}</ul>`;
-
-  return result;
-}
-
-function createHtml(title: string, lists: string, description: string): string {
-  let result = '';
-  
-  result += `
-  <!doctype html>
-  <html>
-  <head>
-    <title>WEB1 - ${title}</title>
-    <meta charset="utf-8">
-  </head>
-  <body>
-    <h1><a href="/">WEB</a></h1>
-    ${lists}
-    <h2>${title}</h2>
-    <p>${description}</p>
-  </body>
-  </html>
-  `;
 
   return result;
 }

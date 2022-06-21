@@ -1,7 +1,7 @@
 import http from 'http';
 import qs from 'querystring';
 import { URL } from 'url';
-import { readFile, readdir, writeFile } from 'node:fs/promises';
+import { readFile, readdir, writeFile, rename } from 'node:fs/promises';
 import { articleHtml } from './src/articleHtml';
 import { createFormHtml } from './src/createFormHtml';
 import { updateFormHtml } from './src/updateFormHtml';
@@ -42,7 +42,7 @@ const server = http.createServer(async (request, response) => {
       const searchParams = new URLSearchParams(body);
       
       if (searchParams.get('title') !== '') {
-        writeFile(`./data/${searchParams.get('title')}`, searchParams.get('description') ?? '');
+        writeFile(`./data/${searchParams.get('title')}`, searchParams.get('description') ?? '', 'utf-8');
 
         response.writeHead(302, {Location: `/?id=${searchParams.get('title')}`});
         response.end();
@@ -63,13 +63,19 @@ const server = http.createServer(async (request, response) => {
       body += data;
     });
 
-    request.on('end', () => {
+    request.on('end', async () => {
       const searchParamsUrl = url.searchParams;
       const searchParamsBody = new URLSearchParams(body);
 
       console.log('id: ' + searchParamsUrl.get('id'));
       console.log('title: ' + searchParamsBody.get('title'));
       console.log('description: ' + searchParamsBody.get('description'));
+
+      await writeFile(
+        `./data/${searchParamsUrl.get('id')}`, 
+        searchParamsBody.get('description') ?? '', 
+        'utf-8'
+      );
       
       response.writeHead(302, {Location: `/?id=${searchParamsUrl.get('id')}`});
       response.end();

@@ -43,9 +43,9 @@ const server = http.createServer(async (request, response) => {
       
       if (searchParams.get('title') !== '') {
         writeFile(`./data/${searchParams.get('title')}`, searchParams.get('description') ?? '');
-        
-        response.statusCode = 200;
-        response.end('success');
+
+        response.writeHead(302, {Location: `/?id=${searchParams.get('title')}`});
+        response.end();
       }
     });
   } else {

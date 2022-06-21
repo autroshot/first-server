@@ -1,4 +1,4 @@
-export function createFormHtml(id: string, description: string, lists: string): string {
+export function updateFormHtml(id: string, description: string, lists: string): string {
   let result = '';
   
   result += `

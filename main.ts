@@ -4,6 +4,7 @@ import { URL } from 'url';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { articleHtml } from './src/articleHtml';
 import { createFormHtml } from './src/createFormHtml';
+import { updateFormHtml } from './src/updateFormHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -49,11 +50,12 @@ const server = http.createServer(async (request, response) => {
     });
   } else if (pathName === '/update' && method === 'GET') {
     const searchParams = url.searchParams;
-    const title = getTitle(searchParams.get('id'));
     const description = await getDescription(searchParams.get('id'));
+    const files = await readdir('./data/')
+    const ul = createUlElement(files);
 
     response.statusCode = 200;
-    response.end(articleHtml(title, '', description, ''));
+    response.end(updateFormHtml(searchParams.get('id') as string, description, ul));
   } else {
     response.statusCode = 404;
     response.end('Not found');

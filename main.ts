@@ -1,7 +1,7 @@
 import http from 'http';
 import qs from 'querystring';
 import { URL } from 'url';
-import { readFile, readdir, writeFile, rename } from 'node:fs/promises';
+import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { articleHtml } from './src/articleHtml';
 import { createFormHtml } from './src/createFormHtml';
 import { updateFormHtml } from './src/updateFormHtml';
@@ -87,6 +87,11 @@ const server = http.createServer(async (request, response) => {
     request.on('end', async () => {
       const searchParamsBody = new URLSearchParams(body);
       console.log('id: ' + searchParamsBody.get('id'));
+
+      await unlink(`./data/${searchParamsBody.get('id')}`);
+
+      response.writeHead(302, {Location: `/`});
+      response.end();
     });
   } else {
     response.statusCode = 404;

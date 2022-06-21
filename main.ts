@@ -3,7 +3,7 @@ import qs from 'querystring';
 import { URL } from 'url';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { articleHtml } from './src/articleHtml';
-import { formHtml } from './src/formHtml';
+import { createFormHtml } from './src/createFormHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -31,7 +31,7 @@ const server = http.createServer(async (request, response) => {
     const ul = createUlElement(files);
 
     response.statusCode = 200;
-    response.end(formHtml(title, ul));
+    response.end(createFormHtml(title, ul));
   } else if (pathName === '/create' && method === 'POST') {
     let body = '';
 
@@ -51,9 +51,11 @@ const server = http.createServer(async (request, response) => {
     });
   } else if (pathName === '/update' && method === 'GET') {
     const searchParams = url.searchParams;
+    const title = getTitle(searchParams.get('id'));
+    const description = await getDescription(searchParams.get('id'));
 
     response.statusCode = 200;
-    response.end(`${searchParams.get('id')} update form`);
+    response.end(articleHtml(title, '', description, ''));
   } else {
     response.statusCode = 404;
     response.end('Not found');

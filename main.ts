@@ -17,12 +17,13 @@ const server = http.createServer(async (request, response) => {
     const searchParams = url.searchParams;
     const title = getTitle(searchParams.get('id'));
     const description = await getDescription(searchParams.get('id'));
+    const funcLink = getFuncLink(searchParams.get('id'));
 
     const files = await readdir('./data/')
     const ul = createUlElement(files);
 
     response.statusCode = 200;
-    response.end(articleHtml(title, ul, description));
+    response.end(articleHtml(title, ul, description, funcLink));
   } else if (pathName === '/create' && method === 'GET') {
     const title = 'WEB - create';
 
@@ -84,6 +85,16 @@ async function getDescription(queryStringId: queryParam): Promise<string> {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  return result;
+}
+
+function getFuncLink(queryStringId: queryParam): string {
+  let result = '<a href="/create">create</a>';
+
+  if (queryStringId !== null) {
+    result += ' <a href="/update">update</a>'
   }
 
   return result;

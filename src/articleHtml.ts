@@ -1,4 +1,4 @@
-export function articleHtml(title: string, lists: string, description: string): string {
+export function articleHtml(title: string, list: string, description: string, funcLink: string): string {
   let result = '';
   
   result += `
@@ -10,8 +10,8 @@ export function articleHtml(title: string, lists: string, description: string): 
   </head>
   <body>
     <h1><a href="/">WEB</a></h1>
-    ${lists}
-    <a href="/create">create</a>
+    ${list}
+    ${funcLink}
     <h2>${title}</h2>
     <p>${description}</p>
   </body>

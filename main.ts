@@ -77,6 +77,17 @@ const server = http.createServer(async (request, response) => {
       response.writeHead(302, {Location: `/?id=${searchParamsBody.get('title')}`});
       response.end();
     });
+  } else if (pathName === '/delete' && method === 'POST') {
+    let body = '';
+
+    request.on('data', function (data) {
+      body += data;
+    });
+
+    request.on('end', async () => {
+      const searchParamsBody = new URLSearchParams(body);
+      console.log('id: ' + searchParamsBody.get('id'));
+    });
   } else {
     response.statusCode = 404;
     response.end('Not found');
@@ -122,7 +133,13 @@ function createFuncLink(queryStringId: queryParam): string {
   let result = '<a href="/create">create</a>';
 
   if (queryStringId !== null) {
-    result += ` <a href="/update?id=${queryStringId}">update</a>`
+    result += `
+      <a href="/update?id=${queryStringId}">update</a> 
+      <form action="/delete" method="post">
+        <input type="hidden" name="id" value="${queryStringId}">
+        <input type="submit" value="delete">
+      </form>
+    `
   }
 
   return result;

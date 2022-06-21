@@ -29,7 +29,7 @@ const server = http.createServer(async (request, response) => {
     const files = await readdir('./data/')
     const ul = createUlElement(files);
 
-    response.statusCode = 404;
+    response.statusCode = 200;
     response.end(formHtml(title, ul));
   } else if (pathName === '/create' && method === 'POST') {
     let body = '';
@@ -38,11 +38,14 @@ const server = http.createServer(async (request, response) => {
       body += data;
     });
 
-    request.on('end', function () {
+    request.on('end', () => {
       const searchParams = new URLSearchParams(body);
       
       if (searchParams.get('title') !== '') {
         writeFile(`./data/${searchParams.get('title')}`, searchParams.get('description') ?? '');
+        
+        response.statusCode = 200;
+        response.end('success');
       }
     });
   } else {

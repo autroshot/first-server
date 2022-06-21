@@ -57,7 +57,23 @@ const server = http.createServer(async (request, response) => {
     response.statusCode = 200;
     response.end(updateFormHtml(searchParams.get('id') as string, description, ul));
   } else if (pathName === '/update' && method === 'POST') {
-    
+    let body = '';
+
+    request.on('data', function (data) {
+      body += data;
+    });
+
+    request.on('end', () => {
+      const searchParamsUrl = url.searchParams;
+      const searchParamsBody = new URLSearchParams(body);
+
+      console.log('id: ' + searchParamsUrl.get('id'));
+      console.log('title: ' + searchParamsBody.get('title'));
+      console.log('description: ' + searchParamsBody.get('description'));
+      
+      response.writeHead(302, {Location: `/?id=${searchParamsUrl.get('id')}`});
+      response.end();
+    });
   } else {
     response.statusCode = 404;
     response.end('Not found');

@@ -18,7 +18,7 @@ const server = http.createServer(async (request, response) => {
     const searchParams = url.searchParams;
     const title = getTitle(searchParams.get('id'));
     const description = await getDescription(searchParams.get('id'));
-    const funcLink = getFuncLink(searchParams.get('id'));
+    const funcLink = createFuncLink(searchParams.get('id'));
 
     const files = await readdir('./data/')
     const ul = createUlElement(files);
@@ -118,7 +118,7 @@ async function getDescription(queryStringId: queryParam): Promise<string> {
   return result;
 }
 
-function getFuncLink(queryStringId: queryParam): string {
+function createFuncLink(queryStringId: queryParam): string {
   let result = '<a href="/create">create</a>';
 
   if (queryStringId !== null) {

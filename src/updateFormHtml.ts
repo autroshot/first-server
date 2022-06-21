@@ -13,7 +13,7 @@ export function updateFormHtml(id: string, description: string, lists: string): 
     ${lists}
     <h2>${id}</h2>
     <p>${description}</p>
-    <form action="http://localhost:3000/create" method="post">
+    <form action="http://localhost:3000/update?id=${id}" method="post">
       <p><input type="text" name="title" placeholder="title"></p>
       <p>
         <textarea name="description" placeholder="description"></textarea>

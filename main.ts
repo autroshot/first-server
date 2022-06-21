@@ -1,5 +1,5 @@
 import http from 'http';
-import fs from 'fs';
+import qs from 'querystring';
 import { URL } from 'url';
 import { readFile, readdir } from 'node:fs/promises';
 import { articleHtml } from './src/articleHtml';
@@ -10,10 +10,11 @@ const PORT = 3000;
 
 const server = http.createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://localhost:3000`);
-  const searchParams = url.searchParams;
   const pathName = url.pathname;
-
+  const method = request.method ?? 'GET';
+  
   if (pathName === '/') {
+    const searchParams = url.searchParams;
     const title = getTitle(searchParams.get('id'));
     const description = await getDescription(searchParams.get('id'));
 
@@ -22,7 +23,7 @@ const server = http.createServer(async (request, response) => {
 
     response.statusCode = 200;
     response.end(articleHtml(title, ul, description));
-  } else if (pathName === '/create') {
+  } else if (pathName === '/create' && method === 'GET') {
     const title = 'WEB - create';
 
     const files = await readdir('./data/')
@@ -30,6 +31,16 @@ const server = http.createServer(async (request, response) => {
 
     response.statusCode = 404;
     response.end(formHtml(title, ul));
+  } else if (pathName === '/create' && method === 'POST') {
+    let body = '';
+
+    request.on('data', function (data) {
+      body += data;
+    });
+
+    request.on('end', function () {
+      console.log(body);
+    });
   } else {
     response.statusCode = 404;
     response.end('Not found');

@@ -12,7 +12,7 @@ export function formHtml(title: string, lists: string): string {
     <h1><a href="/">WEB</a></h1>
     ${lists}
     <a href="/create">create</a>
-    <form action="http://localhost:3000/process_create" method="post">
+    <form action="http://localhost:3000/create" method="post">
       <p><input type="text" name="title" placeholder="title"></p>
       <p>
         <textarea name="description" placeholder="description"></textarea>

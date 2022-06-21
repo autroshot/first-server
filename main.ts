@@ -22,7 +22,7 @@ const server = http.createServer(async (request, response) => {
 
     response.statusCode = 200;
     response.end(articleHtml(title, ul, description));
-  } else if (pathName === '/form') {
+  } else if (pathName === '/create') {
     const title = 'WEB - create';
 
     const files = await readdir('./data/')

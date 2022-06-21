@@ -11,7 +11,7 @@ export function createFormHtml(lists: string): string {
   <body>
     <h1><a href="/">WEB</a></h1>
     ${lists}
-    <form action="http://localhost:3000/create" method="post">
+    <form action="/create" method="post">
       <p><input type="text" name="title" placeholder="title"></p>
       <p>
         <textarea name="description" placeholder="description"></textarea>

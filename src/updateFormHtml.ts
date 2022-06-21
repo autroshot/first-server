@@ -14,9 +14,9 @@ export function updateFormHtml(id: string, description: string, lists: string): 
     <h2>${id}</h2>
     <p>${description}</p>
     <form action="/update?id=${id}" method="post">
-      <p><input type="text" name="title" placeholder="title"></p>
+      <p><input type="text" name="title" placeholder="title" value="${id}"></p>
       <p>
-        <textarea name="description" placeholder="description"></textarea>
+        <textarea name="description" placeholder="description">${description}</textarea>
       </p>
       <p>
         <input type="submit">

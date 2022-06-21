@@ -1,7 +1,7 @@
 import http from 'http';
 import qs from 'querystring';
 import { URL } from 'url';
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { articleHtml } from './src/articleHtml';
 import { formHtml } from './src/formHtml';
 
@@ -40,8 +40,10 @@ const server = http.createServer(async (request, response) => {
 
     request.on('end', function () {
       const searchParams = new URLSearchParams(body);
-      console.log('title: ' + searchParams.get('title'));
-      console.log('description: ' + searchParams.get('description'));
+      
+      if (searchParams.get('title') !== '') {
+        writeFile(`./data/${searchParams.get('title')}`, searchParams.get('description') ?? '');
+      }
     });
   } else {
     response.statusCode = 404;

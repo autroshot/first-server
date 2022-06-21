@@ -39,7 +39,9 @@ const server = http.createServer(async (request, response) => {
     });
 
     request.on('end', function () {
-      console.log(body);
+      const searchParams = new URLSearchParams(body);
+      console.log('title: ' + searchParams.get('title'));
+      console.log('description: ' + searchParams.get('description'));
     });
   } else {
     response.statusCode = 404;

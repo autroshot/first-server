@@ -67,17 +67,14 @@ const server = http.createServer(async (request, response) => {
       const searchParamsUrl = url.searchParams;
       const searchParamsBody = new URLSearchParams(body);
 
-      console.log('id: ' + searchParamsUrl.get('id'));
-      console.log('title: ' + searchParamsBody.get('title'));
-      console.log('description: ' + searchParamsBody.get('description'));
-
       await writeFile(
         `./data/${searchParamsUrl.get('id')}`, 
         searchParamsBody.get('description') ?? '', 
         'utf-8'
       );
+      await rename(`./data/${searchParamsUrl.get('id')}`, `./data/${searchParamsBody.get('title')}`);
       
-      response.writeHead(302, {Location: `/?id=${searchParamsUrl.get('id')}`});
+      response.writeHead(302, {Location: `/?id=${searchParamsBody.get('title')}`});
       response.end();
     });
   } else {

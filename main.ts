@@ -49,6 +49,11 @@ const server = http.createServer(async (request, response) => {
         response.end();
       }
     });
+  } else if (pathName === '/update' && method === 'GET') {
+    const searchParams = url.searchParams;
+
+    response.statusCode = 200;
+    response.end(`${searchParams.get('id')} update form`);
   } else {
     response.statusCode = 404;
     response.end('Not found');
@@ -94,7 +99,7 @@ function getFuncLink(queryStringId: queryParam): string {
   let result = '<a href="/create">create</a>';
 
   if (queryStringId !== null) {
-    result += ' <a href="/update">update</a>'
+    result += ` <a href="/update?id=${queryStringId}">update</a>`
   }
 
   return result;

@@ -25,13 +25,11 @@ const server = http.createServer(async (request, response) => {
     response.statusCode = 200;
     response.end(articleHtml(title, ul, description, funcLink));
   } else if (pathName === '/create' && method === 'GET') {
-    const title = 'WEB - create';
-
     const files = await readdir('./data/')
     const ul = createUlElement(files);
 
     response.statusCode = 200;
-    response.end(createFormHtml(title, ul));
+    response.end(createFormHtml(ul));
   } else if (pathName === '/create' && method === 'POST') {
     let body = '';
 

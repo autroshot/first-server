@@ -1,11 +1,11 @@
-export function createFormHtml(title: string, lists: string): string {
+export function createFormHtml(lists: string): string {
   let result = '';
   
   result += `
   <!doctype html>
   <html>
   <head>
-    <title>WEB1 - ${title}</title>
+    <title>WEB1 - Create</title>
     <meta charset="utf-8">
   </head>
   <body>

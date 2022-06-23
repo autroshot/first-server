@@ -1,6 +1,11 @@
 {
+  "compilerOptions": {
+    "module": "CommonJS"
+  },
   "devDependencies": {
+    "@types/mysql": "^2.15.21",
     "@types/node": "^18.0.0",
+    "@types/sanitize-html": "^2.6.2",
     "nodemon": "^2.0.16",
     "ts-node": "^10.8.1"
   },
@@ -9,5 +14,9 @@
     "copy-files": "cp -r src/public/ dist/public/ && cp -r src/views/ dist/views/",
     "build": "tsc && npm run copy-files",
     "start": "node dist/bin/www.js"
+  },
+  "dependencies": {
+    "mysql": "^2.18.1",
+    "sanitize-html": "^2.7.0"
   }
 }

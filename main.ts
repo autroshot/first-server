@@ -1,5 +1,5 @@
 import http from 'http';
-import qs from 'querystring';
+import mysql from 'mysql';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { articleHtml } from './src/articleHtml';
@@ -8,6 +8,14 @@ import { updateFormHtml } from './src/updateFormHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
+const connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : '1234',
+  database : 'opentutorials'
+});
+
+connection.connect();
 
 const server = http.createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://localhost:3000`);
@@ -15,16 +23,31 @@ const server = http.createServer(async (request, response) => {
   const method = request.method ?? 'GET';
   
   if (pathName === '/') {
-    const searchParams = url.searchParams;
-    const title = getTitle(searchParams.get('id'));
-    const description = await getDescription(searchParams.get('id'));
-    const funcLink = createFuncLink(searchParams.get('id'));
+    // const searchParams = url.searchParams;
+    // const title = getTitle(searchParams.get('id'));
+    // const description = await getDescription(searchParams.get('id'));
+    // const funcLink = createFuncLink(searchParams.get('id'));
 
-    const files = await readdir('./data/')
-    const ul = createUlElement(files);
+    // const files = await readdir('./data/')
+    // const ul = createUlElement(files);
 
-    response.statusCode = 200;
-    response.end(articleHtml(title, ul, description, funcLink));
+    // response.statusCode = 200;
+    // response.end(articleHtml(title, ul, description, funcLink));
+    connection.query('SELECT * FROM topic', async (error, topics) => {
+      if (error) throw error;
+      
+      console.log(topics);
+
+      const searchParams = url.searchParams;
+      const title = getTitle(searchParams.get('id'));
+      const description = await getDescription(searchParams.get('id'));
+      const funcLink = createFuncLink(searchParams.get('id'));
+
+      const ul = createUlElement(topics);
+
+      response.statusCode = 200;
+      response.end(articleHtml(title, ul, description, funcLink));
+    });
   } else if (pathName === '/create' && method === 'GET') {
     const files = await readdir('./data/')
     const ul = createUlElement(files);

@@ -2,6 +2,7 @@ import http from 'http';
 import mysql from 'mysql';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
+import { indexHtml } from './src/indexHtml'
 import { articleHtml } from './src/articleHtml';
 import { createFormHtml } from './src/createFormHtml';
 import { updateFormHtml } from './src/updateFormHtml';
@@ -35,18 +36,15 @@ const server = http.createServer(async (request, response) => {
     // response.end(articleHtml(title, ul, description, funcLink));
     connection.query('SELECT * FROM topic', async (error, topics) => {
       if (error) throw error;
-      
-      console.log(topics);
 
-      const searchParams = url.searchParams;
-      const title = getTitle(searchParams.get('id'));
-      const description = await getDescription(searchParams.get('id'));
-      const funcLink = createFuncLink(searchParams.get('id'));
+      const topicTitles = topics.reduce((previousArray: string[], currentObject: Topic) => {
+        return previousArray.concat(currentObject.title);
+      }, []);
 
-      const ul = createUlElement(topics);
+      const ul = createUlElement(topicTitles);
 
       response.statusCode = 200;
-      response.end(articleHtml(title, ul, description, funcLink));
+      response.end(indexHtml(ul));
     });
   } else if (pathName === '/create' && method === 'GET') {
     const files = await readdir('./data/')
@@ -171,4 +169,12 @@ function createFuncLink(queryStringId: queryParam): string {
   }
 
   return result;
+}
+
+interface Topic {
+  id: number;
+  title: string;
+  description: string;
+  created: Date;
+  author_id: number;
 }

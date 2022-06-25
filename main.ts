@@ -24,34 +24,20 @@ const server = http.createServer(async (request, response) => {
   const method = request.method ?? 'GET';
   
   if (pathName === '/') {
-    // const searchParams = url.searchParams;
-    // const title = getTitle(searchParams.get('id'));
-    // const description = await getDescription(searchParams.get('id'));
-    // const funcLink = createFuncLink(searchParams.get('id'));
-
-    // const files = await readdir('./data/')
-    // const ul = createUlElement(files);
-
-    // response.statusCode = 200;
-    // response.end(articleHtml(title, ul, description, funcLink));
     connection.query('SELECT * FROM topic', async (error, topics) => {
       if (error) throw error;
 
-      const topicTitles = topics.reduce((previousArray: string[], currentObject: Topic) => {
-        return previousArray.concat(currentObject.title);
-      }, []);
-
-      const ul = createUlElement(topicTitles);
+      const ul = createLinkList(topics);
 
       response.statusCode = 200;
       response.end(indexHtml(ul));
     });
   } else if (pathName === '/create' && method === 'GET') {
-    const files = await readdir('./data/')
-    const ul = createUlElement(files);
+    // const files = await readdir('./data/')
+    // const ul = createLinkList(files);
 
-    response.statusCode = 200;
-    response.end(createFormHtml(ul));
+    // response.statusCode = 200;
+    // response.end(createFormHtml(ul));
   } else if (pathName === '/create' && method === 'POST') {
     let body = '';
 
@@ -70,13 +56,13 @@ const server = http.createServer(async (request, response) => {
       }
     });
   } else if (pathName === '/update' && method === 'GET') {
-    const searchParams = url.searchParams;
-    const description = await getDescription(searchParams.get('id'));
-    const files = await readdir('./data/')
-    const ul = createUlElement(files);
+    // const searchParams = url.searchParams;
+    // const description = await getDescription(searchParams.get('id'));
+    // const files = await readdir('./data/')
+    // const ul = createLinkList(files);
 
-    response.statusCode = 200;
-    response.end(updateFormHtml(searchParams.get('id') as string, description, ul));
+    // response.statusCode = 200;
+    // response.end(updateFormHtml(searchParams.get('id') as string, description, ul));
   } else if (pathName === '/update' && method === 'POST') {
     let body = '';
 
@@ -124,11 +110,11 @@ server.listen(PORT, DOMAIN, () => {
   console.log(`Server running at http://${DOMAIN}:${PORT}/`);
 });
 
-function createUlElement(arr: string[]): string {
+function createLinkList(arr: Topic[]): string {
   let result = '';
 
-  const lis = arr.reduce((previousValue, currentValue) => {
-    return previousValue + `<li><a href="/?id=${currentValue}">${currentValue}</a></il>`;
+  const lis = arr.reduce((previousValue, currentTopic) => {
+    return previousValue + `<li><a href="/?id=${currentTopic.id}">${currentTopic.title}</a></il>`;
   }, '');
   result += `<ul>${lis}</ul>`;
 

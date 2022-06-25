@@ -22,16 +22,19 @@ const server = http.createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://localhost:3000`);
   const pathName = url.pathname;
   const method = request.method ?? 'GET';
-  
   if (pathName === '/') {
-    connection.query('SELECT * FROM topic', async (error, topics) => {
-      if (error) throw error;
-
-      const ul = createLinkList(topics);
-
-      response.statusCode = 200;
-      response.end(indexHtml(ul));
-    });
+    if (url.searchParams.get('id') === null) {
+      connection.query('SELECT * FROM topic', async (error, topics) => {
+        if (error) throw error;
+  
+        const ul = createLinkList(topics);
+  
+        response.statusCode = 200;
+        response.end(indexHtml(ul));
+      });
+    } else {
+      
+    }
   } else if (pathName === '/create' && method === 'GET') {
     // const files = await readdir('./data/')
     // const ul = createLinkList(files);

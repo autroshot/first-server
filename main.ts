@@ -2,10 +2,7 @@ import http from 'http';
 import mysql from 'mysql2/promise';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
-import { indexHtml } from './src/indexHtml'
-import { articleHtml } from './src/articleHtml';
-import { createFormHtml } from './src/createFormHtml';
-import { updateFormHtml } from './src/updateFormHtml';
+import { indexHtml } from './server/views/indexHtml'
 
 const DOMAIN = 'localhost';
 const PORT = 3000;

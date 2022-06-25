@@ -1,5 +1,5 @@
 import http from 'http';
-import mysql from 'mysql';
+import mysql from 'mysql2/promise';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './src/indexHtml'
@@ -9,31 +9,34 @@ import { updateFormHtml } from './src/updateFormHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
-const connection = mysql.createConnection({
+const connectionConfig = {
   host     : 'localhost',
   user     : 'root',
   password : '1234',
   database : 'opentutorials'
-});
-
-connection.connect();
+}
 
 const server = http.createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://localhost:3000`);
   const pathName = url.pathname;
   const method = request.method ?? 'GET';
+  
   if (pathName === '/') {
     if (url.searchParams.get('id') === null) {
-      connection.query('SELECT * FROM topic', async (error, topics) => {
-        if (error) throw error;
-  
-        const ul = createLinkList(topics);
-  
-        response.statusCode = 200;
-        response.end(indexHtml(ul));
-      });
+      const ul = await createTopicLinkList();
+
+      response.statusCode = 200;
+      response.end(indexHtml(ul));
     } else {
-      
+      // const id = url.searchParams.get('id') as string;
+      // connection.query(`SELECT * FROM topic WHERE id = ${id}`, (error, topics) => {
+      //   if (error) throw error;
+  
+      //   const ul = createTopicLinkList();
+  
+      //   response.statusCode = 200;
+      //   response.end(indexHtml(ul));
+      // });
     }
   } else if (pathName === '/create' && method === 'GET') {
     // const files = await readdir('./data/')
@@ -113,13 +116,20 @@ server.listen(PORT, DOMAIN, () => {
   console.log(`Server running at http://${DOMAIN}:${PORT}/`);
 });
 
-function createLinkList(arr: Topic[]): string {
+async function createTopicLinkList(): Promise<string> {
   let result = '';
+  
+  const connection = await mysql.createConnection(connectionConfig);
 
-  const lis = arr.reduce((previousValue, currentTopic) => {
+  const [topics, fields] = await connection.query<mysql.RowDataPacket[]>('SELECT * FROM topic');
+
+  const lis = topics.reduce((previousValue: string, currentTopic) => {
     return previousValue + `<li><a href="/?id=${currentTopic.id}">${currentTopic.title}</a></il>`;
   }, '');
+
   result += `<ul>${lis}</ul>`;
+
+  await connection.end();
 
   return result;
 }
@@ -158,12 +168,4 @@ function createFuncLink(queryStringId: queryParam): string {
   }
 
   return result;
-}
-
-interface Topic {
-  id: number;
-  title: string;
-  description: string;
-  created: Date;
-  author_id: number;
 }

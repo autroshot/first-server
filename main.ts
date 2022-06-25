@@ -3,15 +3,10 @@ import mysql from 'mysql2/promise';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './server/views/indexHtml'
+import { getAllTopics } from './server/models/topic'
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
-const connectionConfig = {
-  host     : 'localhost',
-  user     : 'root',
-  password : '1234',
-  database : 'opentutorials'
-}
 
 const server = http.createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://localhost:3000`);
@@ -116,17 +111,12 @@ server.listen(PORT, DOMAIN, () => {
 async function createTopicLinkList(): Promise<string> {
   let result = '';
   
-  const connection = await mysql.createConnection(connectionConfig);
-
-  const [topics, fields] = await connection.query<mysql.RowDataPacket[]>('SELECT * FROM topic');
+  const topics = await getAllTopics();
 
   const lis = topics.reduce((previousValue: string, currentTopic) => {
     return previousValue + `<li><a href="/?id=${currentTopic.id}">${currentTopic.title}</a></il>`;
   }, '');
-
   result += `<ul>${lis}</ul>`;
-
-  await connection.end();
 
   return result;
 }

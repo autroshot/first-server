@@ -5,6 +5,7 @@ import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './server/views/indexHtml'
 import { getAllTopics, getTopicById } from './server/models/topic'
 import { topicDetailHtml } from './server/views/topicDetailHtml';
+import { createFormHtml } from './server/views/createFormHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -30,15 +31,14 @@ const server = http.createServer(async (request, response) => {
       response.end(html);
     }
   } else if (pathName === '/create' && method === 'GET') {
-    // const files = await readdir('./data/')
-    // const ul = createLinkList(files);
+    const html = await createFormHtml();
 
-    // response.statusCode = 200;
-    // response.end(createFormHtml(ul));
+    response.statusCode = 200;
+    response.end(html);
   } else if (pathName === '/create' && method === 'POST') {
     let body = '';
 
-    request.on('data', function (data) {
+    request.on('data', function(data) {
       body += data;
     });
 

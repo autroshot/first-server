@@ -1,6 +1,10 @@
-export function createFormHtml(lists: string): string {
+import { createTopicLinkUl } from "./library";
+
+export async function createFormHtml(): Promise<string> {
   let result = '';
   
+  const ul = await createTopicLinkUl();
+
   result += `
   <!doctype html>
   <html>
@@ -10,7 +14,7 @@ export function createFormHtml(lists: string): string {
   </head>
   <body>
     <h1><a href="/">WEB</a></h1>
-    ${lists}
+    ${ul}
     <form action="/create" method="post">
       <p><input type="text" name="title" placeholder="title"></p>
       <p>

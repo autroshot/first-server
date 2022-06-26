@@ -53,9 +53,9 @@ const server = http.createServer(async (request, response) => {
         };
 
         try {
-          const resultSetHeader = await insertTopic(topicCreateForm);
+          const queryResult = await insertTopic(topicCreateForm);
           
-          response.writeHead(302, {Location: `/?id=${resultSetHeader[0].insertId}`});
+          response.writeHead(302, {Location: `/?id=${queryResult[0].insertId}`});
           response.end();
         } catch (err) {
           response.writeHead(400);

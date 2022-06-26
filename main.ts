@@ -3,8 +3,7 @@ import mysql from 'mysql2/promise';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './server/views/indexHtml'
-import { getAllTopics } from './server/models/topic'
-import { Topic } from './server/types/topic';
+import { getAllTopics, getTopicById } from './server/models/topic'
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -12,24 +11,24 @@ const PORT = 3000;
 const server = http.createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://localhost:3000`);
   const pathName = url.pathname;
+  const searchParams = url.searchParams;
   const method = request.method ?? 'GET';
   
   if (pathName === '/') {
-    if (url.searchParams.get('id') === null) {
-      const ul = await createTopicLinkList();
+    if (searchParams.get('id') === null) {
+      const html = await indexHtml();
 
       response.statusCode = 200;
-      response.end(indexHtml(ul));
+      response.end(html);
     } else {
-      // const id = url.searchParams.get('id') as string;
-      // connection.query(`SELECT * FROM topic WHERE id = ${id}`, (error, topics) => {
-      //   if (error) throw error;
+      const id = +(searchParams.get('id') as string);
+
+      const [topic] = await getTopicById(id);
+      const CRULink = createCRULink(id);
+      const ul = await createTopicLinkList();
   
-      //   const ul = createTopicLinkList();
-  
-      //   response.statusCode = 200;
-      //   response.end(indexHtml(ul));
-      // });
+      response.statusCode = 200;
+      response.end(indexHtml());
     }
   } else if (pathName === '/create' && method === 'GET') {
     // const files = await readdir('./data/')
@@ -142,18 +141,16 @@ async function getDescription(queryStringId: queryParam): Promise<string> {
   return result;
 }
 
-function createFuncLink(queryStringId: queryParam): string {
+function createCRULink(id: number): string {
   let result = '<a href="/create">create</a>';
 
-  if (queryStringId !== null) {
-    result += `
-      <a href="/update?id=${queryStringId}">update</a> 
-      <form action="/delete" method="post">
-        <input type="hidden" name="id" value="${queryStringId}">
-        <input type="submit" value="delete">
-      </form>
-    `
-  }
+  result += `
+    <a href="/update?id=${id}">update</a> 
+    <form action="/delete" method="post">
+      <input type="hidden" name="id" value="${id}">
+      <input type="submit" value="delete">
+    </form>
+  `
 
   return result;
 }

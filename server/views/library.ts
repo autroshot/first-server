@@ -17,7 +17,7 @@ export function createCRULink(id: number): string {
 export async function createTopicLinkUl(): Promise<string> {
   let result = '';
   
-  let [topics] = await getAllTopics();
+  let topics = await getAllTopics();
 
   const lis = topics.reduce((previousValue: string, currentTopic) => {
     return previousValue + `<li><a href="/?id=${currentTopic.topic_id}">${currentTopic.title}</a></il>`;

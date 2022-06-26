@@ -2,9 +2,13 @@ import { pool } from '../dbConnection';
 import { Topic } from '../types/topic';
 
 export async function getAllTopics() {
-  return pool.query<Topic[]>('SELECT * FROM topic');
+  const [rows] = await pool.query<Topic[]>('SELECT * FROM topic');
+  
+  return rows;
 }
 
 export async function getTopicById(id: number) {
-  return pool.query<Topic[]>(`SELECT * FROM topic WHERE topic_id = ${id}`);
+  const [rows] = await pool.query<Topic[]>(`SELECT * FROM topic WHERE topic_id = ${id}`);
+  
+  return rows[0];
 }

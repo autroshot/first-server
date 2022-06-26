@@ -4,6 +4,7 @@ import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './server/views/indexHtml'
 import { getAllTopics, getTopicById } from './server/models/topic'
+import { topicDetailHtml } from './server/views/topicDetailHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -22,13 +23,11 @@ const server = http.createServer(async (request, response) => {
       response.end(html);
     } else {
       const id = +(searchParams.get('id') as string);
-
-      const [topic] = await getTopicById(id);
-      const CRULink = createCRULink(id);
-      const ul = await createTopicLinkList();
   
+      const html = await topicDetailHtml(id);
+
       response.statusCode = 200;
-      response.end(indexHtml());
+      response.end(html);
     }
   } else if (pathName === '/create' && method === 'GET') {
     // const files = await readdir('./data/')
@@ -108,19 +107,6 @@ server.listen(PORT, DOMAIN, () => {
   console.log(`Server running at http://${DOMAIN}:${PORT}/`);
 });
 
-async function createTopicLinkList(): Promise<string> {
-  let result = '';
-  
-  let [topics] = await getAllTopics();
-
-  const lis = topics.reduce((previousValue: string, currentTopic) => {
-    return previousValue + `<li><a href="/?id=${currentTopic.topic_id}">${currentTopic.title}</a></il>`;
-  }, '');
-  result += `<ul>${lis}</ul>`;
-
-  return result;
-}
-
 type queryParam = string | null;
 
 function getTitle(queryStringId: queryParam): string {
@@ -137,20 +123,6 @@ async function getDescription(queryStringId: queryParam): Promise<string> {
       console.log(err);
     }
   }
-
-  return result;
-}
-
-function createCRULink(id: number): string {
-  let result = '<a href="/create">create</a>';
-
-  result += `
-    <a href="/update?id=${id}">update</a> 
-    <form action="/delete" method="post">
-      <input type="hidden" name="id" value="${id}">
-      <input type="submit" value="delete">
-    </form>
-  `
 
   return result;
 }

@@ -4,6 +4,7 @@ import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './server/views/indexHtml'
 import { getAllTopics } from './server/models/topic'
+import { Topic } from './server/types/topic';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -111,10 +112,10 @@ server.listen(PORT, DOMAIN, () => {
 async function createTopicLinkList(): Promise<string> {
   let result = '';
   
-  const topics = await getAllTopics();
+  let [topics] = await getAllTopics();
 
   const lis = topics.reduce((previousValue: string, currentTopic) => {
-    return previousValue + `<li><a href="/?id=${currentTopic.id}">${currentTopic.title}</a></il>`;
+    return previousValue + `<li><a href="/?id=${currentTopic.topic_id}">${currentTopic.title}</a></il>`;
   }, '');
   result += `<ul>${lis}</ul>`;
 

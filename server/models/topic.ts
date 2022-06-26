@@ -1,12 +1,6 @@
-import { connectionConfig } from '../dbConnectionConfig';
-import mysql from 'mysql2/promise';
+import { pool } from '../dbConnection';
+import { Topic } from '../types/topic';
 
 export async function getAllTopics() {
-  const connection = await mysql.createConnection(connectionConfig);
-
-  const [rows] = await connection.query<mysql.RowDataPacket[]>('SELECT * FROM topic');
-
-  await connection.end();
-
-  return rows
+  return pool.query<Topic[]>('SELECT * FROM topic');
 }

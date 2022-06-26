@@ -7,3 +7,8 @@ export interface Topic extends RowDataPacket {
   topic_created_date: Date;
   author_id: number;
 }
+
+export interface TopicCreateForm {
+  title: string;
+  description: string;
+}

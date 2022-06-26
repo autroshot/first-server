@@ -3,9 +3,10 @@ import mysql from 'mysql2/promise';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './server/views/indexHtml'
-import { getAllTopics, getTopicById } from './server/models/topic'
+import { getAllTopics, getTopicById, insertTopic } from './server/models/topic'
 import { topicDetailHtml } from './server/views/topicDetailHtml';
 import { createFormHtml } from './server/views/createFormHtml';
+import { TopicCreateForm } from './server/types/topic';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -38,18 +39,28 @@ const server = http.createServer(async (request, response) => {
   } else if (pathName === '/create' && method === 'POST') {
     let body = '';
 
-    request.on('data', function(data) {
+    request.on('data', data => {
       body += data;
     });
 
-    request.on('end', () => {
+    request.on('end', async () => {
       const searchParams = new URLSearchParams(body);
       
       if (searchParams.get('title') !== '') {
-        writeFile(`./data/${searchParams.get('title')}`, searchParams.get('description') ?? '', 'utf-8');
+        let topicCreateForm: TopicCreateForm = {
+          title: searchParams.get('title') as string,
+          description: searchParams.get('description') ?? '',
+        };
 
-        response.writeHead(302, {Location: `/?id=${searchParams.get('title')}`});
-        response.end();
+        try {
+          const resultSetHeader = await insertTopic(topicCreateForm);
+          
+          response.writeHead(302, {Location: `/?id=${resultSetHeader[0].insertId}`});
+          response.end();
+        } catch (err) {
+          response.writeHead(400);
+          response.end(err);
+        }
       }
     });
   } else if (pathName === '/update' && method === 'GET') {

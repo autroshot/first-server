@@ -71,6 +71,7 @@ const server = http.createServer(async (request, response) => {
 
     // response.statusCode = 200;
     // response.end(updateFormHtml(searchParams.get('id') as string, description, ul));
+    
   } else if (pathName === '/update' && method === 'POST') {
     let body = '';
 

@@ -1,5 +1,11 @@
-export function updateFormHtml(id: string, description: string, lists: string): string {
+import { getTopicById } from "../models/topic";
+import { createTopicLinkUl } from "./library";
+
+export async function updateFormHtml(id: number): Promise<string> {
   let result = '';
+
+  const ul = await createTopicLinkUl();
+  const description = await getTopicById(id);
   
   result += `
   <!doctype html>
@@ -10,7 +16,7 @@ export function updateFormHtml(id: string, description: string, lists: string): 
   </head>
   <body>
     <h1><a href="/">WEB</a></h1>
-    ${lists}
+    ${ul}
     <h2>${id}</h2>
     <p>${description}</p>
     <form action="/update?id=${id}" method="post">

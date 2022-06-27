@@ -1,17 +1,15 @@
-import { sequelize } from '../dbConnection';
-import { DataTypes } from 'sequelize';
+import { pool } from '../dbConnection';
+import { AuthorRowDataPacket } from '../types/author';
 
-export const Author = sequelize.define('Author', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  name: {
-    type: DataTypes.STRING(20),
-    allowNull: false,
-  },
-  profile: {
-    type: DataTypes.STRING(200),
-  }
-});
+export async function getAuthorById(id: number) {
+  const [rows] = await pool.execute<AuthorRowDataPacket[]>(`
+    SELECT 
+      * 
+    FROM 
+      author 
+    WHERE 
+      author_id = ?`, 
+    [id]);
+  
+  return rows[0];
+}

@@ -14,17 +14,17 @@ const PORT = 3000;
 const server = http.createServer(async (request, response) => {
   const url = new URL(request.url ?? '/', `http://localhost:3000`);
   const pathName = url.pathname;
-  const searchParams = url.searchParams;
+  const urlSearchParams = url.searchParams;
   const method = request.method ?? 'GET';
   
   if (pathName === '/') {
-    if (searchParams.get('id') === null) {
+    if (urlSearchParams.get('id') === null) {
       const html = await indexHtml();
 
       response.statusCode = 200;
       response.end(html);
     } else {
-      const id = +(searchParams.get('id') as string);
+      const id = +(urlSearchParams.get('id') as string);
   
       const html = await topicDetailHtml(id);
 
@@ -44,12 +44,12 @@ const server = http.createServer(async (request, response) => {
     });
 
     request.on('end', async () => {
-      const searchParams = new URLSearchParams(body);
+      const formSearchParams = new URLSearchParams(body);
       
-      if (searchParams.get('title') !== '') {
+      if (formSearchParams.get('title') !== '') {
         let topicCreateForm: TopicCreateForm = {
-          title: searchParams.get('title') as string,
-          description: searchParams.get('description') ?? '',
+          title: formSearchParams.get('title') as string,
+          description: formSearchParams.get('description') ?? '',
         };
 
         try {
@@ -71,7 +71,7 @@ const server = http.createServer(async (request, response) => {
 
     // response.statusCode = 200;
     // response.end(updateFormHtml(searchParams.get('id') as string, description, ul));
-    
+
   } else if (pathName === '/update' && method === 'POST') {
     let body = '';
 

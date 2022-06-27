@@ -7,6 +7,7 @@ import { getAllTopics, getTopicById, insertTopic } from './server/models/topic'
 import { topicDetailHtml } from './server/views/topicDetailHtml';
 import { createFormHtml } from './server/views/createFormHtml';
 import { TopicCreateForm } from './server/types/topic';
+import { updateFormHtml } from './server/views/updateFormHtml';
 
 const DOMAIN = 'localhost';
 const PORT = 3000;
@@ -58,20 +59,22 @@ const server = http.createServer(async (request, response) => {
           response.writeHead(302, {Location: `/?id=${queryResult[0].insertId}`});
           response.end();
         } catch (err) {
-          response.writeHead(400);
+          response.statusCode = 400;
           response.end(err);
         }
       }
     });
   } else if (pathName === '/update' && method === 'GET') {
-    // const searchParams = url.searchParams;
-    // const description = await getDescription(searchParams.get('id'));
-    // const files = await readdir('./data/')
-    // const ul = createLinkList(files);
+    if (urlSearchParams.get('id') === null) {
+      response.statusCode = 400;
+      response.end('Bad Request');
+    } else {
+      const id = +(urlSearchParams.get('id') as string);
+      const html = await updateFormHtml(id);
 
-    // response.statusCode = 200;
-    // response.end(updateFormHtml(searchParams.get('id') as string, description, ul));
-
+      response.statusCode = 200;
+      response.end(html);
+    }
   } else if (pathName === '/update' && method === 'POST') {
     let body = '';
 

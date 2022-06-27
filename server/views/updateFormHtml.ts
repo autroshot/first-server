@@ -5,7 +5,7 @@ export async function updateFormHtml(id: number): Promise<string> {
   let result = '';
 
   const ul = await createTopicLinkUl();
-  const description = await getTopicById(id);
+  const topic = await getTopicById(id);
   
   result += `
   <!doctype html>
@@ -17,12 +17,10 @@ export async function updateFormHtml(id: number): Promise<string> {
   <body>
     <h1><a href="/">WEB</a></h1>
     ${ul}
-    <h2>${id}</h2>
-    <p>${description}</p>
     <form action="/update?id=${id}" method="post">
-      <p><input type="text" name="title" placeholder="title" value="${id}"></p>
+      <p><input type="text" name="title" placeholder="title" value="${topic.title}"></p>
       <p>
-        <textarea name="description" placeholder="description">${description}</textarea>
+        <textarea name="description" placeholder="description">${topic.description}</textarea>
       </p>
       <p>
         <input type="submit">

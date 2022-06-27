@@ -1,6 +1,6 @@
 import { getAllAuthors } from "../models/author";
 import { AuthorRowDataPacket } from "../types/author";
-import { createTopicLinkUl } from "./library";
+import { createAuthorOptions, createTopicLinkUl } from "./library";
 
 export async function createFormHtml(): Promise<string> {
   let result = '';
@@ -33,18 +33,6 @@ export async function createFormHtml(): Promise<string> {
     </body>
     </html>
   `;
-
-  return result;
-}
-
-async function createAuthorOptions() {
-  let result = '';
-
-  const authors = await getAllAuthors();
-
-  result += authors.reduce((previousValue, author) => {
-    return previousValue + `<option value="${author.author_id}">${author.name}</option>`;
-  }, '');
 
   return result;
 }

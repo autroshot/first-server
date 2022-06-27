@@ -11,6 +11,7 @@ export interface TopicRowDataPacket extends RowDataPacket {
 export interface TopicCreateForm {
   title: string;
   description: string;
+  author_id: number;
 }
 
 export interface TopicUpdateForm {

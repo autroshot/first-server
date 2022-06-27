@@ -51,6 +51,7 @@ const server = http.createServer(async (request, response) => {
         let topicCreateForm: TopicCreateForm = {
           title: formSearchParams.get('title') as string,
           description: formSearchParams.get('description') ?? '',
+          author_id: +(formSearchParams.get('author_id') as string),
         };
 
         try {

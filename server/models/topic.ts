@@ -17,8 +17,8 @@ export async function getTopicById(id: number) {
 export async function insertTopic(form: TopicCreateForm) {
   const promise = await pool.execute<ResultSetHeader>(`
     INSERT INTO TOPIC (title, description, topic_created_date, author_id) 
-    VALUES (?, ?, now(), 1)`, 
-    [form.title, form.description]);
+    VALUES (?, ?, now(), ?)`, 
+    [form.title, form.description, form.author_id]);
 
   return promise;
 }

@@ -1,9 +1,12 @@
+import { getAllAuthors } from "../models/author";
+import { AuthorRowDataPacket } from "../types/author";
 import { createTopicLinkUl } from "./library";
 
 export async function createFormHtml(): Promise<string> {
   let result = '';
   
   const ul = await createTopicLinkUl();
+  const options = await createAuthorOptions();
 
   result += `
     <!doctype html>
@@ -16,6 +19,9 @@ export async function createFormHtml(): Promise<string> {
       <h1><a href="/">WEB</a></h1>
       ${ul}
       <form action="/create" method="post">
+        <select name="author_id">
+          ${options}
+        </select>
         <p><input type="text" name="title" placeholder="title"></p>
         <p>
           <textarea name="description" placeholder="description"></textarea>
@@ -27,6 +33,18 @@ export async function createFormHtml(): Promise<string> {
     </body>
     </html>
   `;
+
+  return result;
+}
+
+async function createAuthorOptions() {
+  let result = '';
+
+  const authors = await getAllAuthors();
+
+  result += authors.reduce((previousValue, author) => {
+    return previousValue + `<option value="${author.author_id}">${author.name}</option>`;
+  }, '');
 
   return result;
 }

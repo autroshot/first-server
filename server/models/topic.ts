@@ -42,3 +42,13 @@ export async function updateTopic(newTopic: TopicUpdateForm) {
 
   return promise;
 }
+
+export async function deleteTopic(id: number) {
+  const promise = await pool.execute<ResultSetHeader>(`
+    DELETE FROM topic 
+    WHERE
+        topic_id = ?`, 
+    [id]);
+
+  return promise;
+}

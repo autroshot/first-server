@@ -1,6 +1,6 @@
 import { getAllTopics } from "../models/topic";
 
-export function createCRULink(id: number): string {
+export function createCUDLink(id: number): string {
   let result = '<a href="/create">create</a>';
 
   result += `

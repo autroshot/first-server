@@ -3,7 +3,7 @@ import mysql from 'mysql2/promise';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './server/views/indexHtml'
-import { getAllTopics, getTopicById, insertTopic, updateTopic } from './server/models/topic'
+import { deleteTopic, getAllTopics, getTopicById, insertTopic, updateTopic } from './server/models/topic'
 import { topicDetailHtml } from './server/views/topicDetailHtml';
 import { createFormHtml } from './server/views/createFormHtml';
 import { TopicCreateForm, TopicUpdateForm } from './server/types/topic';
@@ -120,12 +120,18 @@ const server = http.createServer(async (request, response) => {
 
     request.on('end', async () => {
       const searchParamsBody = new URLSearchParams(body);
-      console.log('id: ' + searchParamsBody.get('id'));
+      const id = +(searchParamsBody.get('id') as string);
 
-      await unlink(`./data/${searchParamsBody.get('id')}`);
-
-      response.writeHead(302, {Location: `/`});
-      response.end();
+      try {
+        await deleteTopic(id);
+        console.log('topic DELETE 성공');
+  
+        response.writeHead(302, {Location: `/`});
+        response.end();
+      } catch (err) {
+        response.statusCode = 400;
+        response.end(err);
+      }
     });
   } else {
     response.statusCode = 404;

@@ -1,12 +1,12 @@
 import { getTopicById } from "../models/topic";
 import { articleHtmlParams } from "../types/articleHtmlParams";
-import { createCRULink, createTopicLinkUl } from "./library";
+import { createCUDLink, createTopicLinkUl } from "./library";
 
 export async function topicDetailHtml(id: number): Promise<string> {
   let result = '';
 
   const topic = await getTopicById(id);
-  const CRULink = createCRULink(id);
+  const CUDLink = createCUDLink(id);
   const topicLinkUl = await createTopicLinkUl();
   
   result += `
@@ -19,7 +19,7 @@ export async function topicDetailHtml(id: number): Promise<string> {
   <body>
     <h1><a href="/">WEB</a></h1>
     ${topicLinkUl}
-    ${CRULink}
+    ${CUDLink}
     <h2>${topic.title}</h2>
     <p>${topic.description}</p>
   </body>

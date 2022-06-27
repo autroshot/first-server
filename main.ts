@@ -142,23 +142,3 @@ const server = http.createServer(async (request, response) => {
 server.listen(PORT, DOMAIN, () => {
   console.log(`Server running at http://${DOMAIN}:${PORT}/`);
 });
-
-type queryParam = string | null;
-
-function getTitle(queryStringId: queryParam): string {
-  return queryStringId ?? 'Welcome';
-}
-
-async function getDescription(queryStringId: queryParam): Promise<string> {
-  let result = 'Hello, Node.js';
-
-  if (queryStringId !== null) {
-    try {
-      result = await readFile(`./data/${queryStringId}`, 'utf-8');
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  return result;
-}

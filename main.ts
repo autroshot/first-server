@@ -3,10 +3,10 @@ import mysql from 'mysql2/promise';
 import { URL } from 'url';
 import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { indexHtml } from './server/views/indexHtml'
-import { getAllTopics, getTopicById, insertTopic } from './server/models/topic'
+import { getAllTopics, getTopicById, insertTopic, updateTopic } from './server/models/topic'
 import { topicDetailHtml } from './server/views/topicDetailHtml';
 import { createFormHtml } from './server/views/createFormHtml';
-import { TopicCreateForm } from './server/types/topic';
+import { TopicCreateForm, TopicUpdateForm } from './server/types/topic';
 import { updateFormHtml } from './server/views/updateFormHtml';
 
 const DOMAIN = 'localhost';
@@ -55,6 +55,7 @@ const server = http.createServer(async (request, response) => {
 
         try {
           const queryResult = await insertTopic(topicCreateForm);
+          console.log('topic CREATE 성공');
           
           response.writeHead(302, {Location: `/?id=${queryResult[0].insertId}`});
           response.end();
@@ -76,6 +77,12 @@ const server = http.createServer(async (request, response) => {
       response.end(html);
     }
   } else if (pathName === '/update' && method === 'POST') {
+    if (urlSearchParams.get('id') === null) {
+      response.statusCode = 400;
+      response.end('Bad Request');
+    }
+    const id = +(urlSearchParams.get('id') as string);
+
     let body = '';
 
     request.on('data', function (data) {
@@ -83,18 +90,26 @@ const server = http.createServer(async (request, response) => {
     });
 
     request.on('end', async () => {
-      const searchParamsUrl = url.searchParams;
-      const searchParamsBody = new URLSearchParams(body);
+      const formSearchParams = new URLSearchParams(body);
 
-      await writeFile(
-        `./data/${searchParamsUrl.get('id')}`, 
-        searchParamsBody.get('description') ?? '', 
-        'utf-8'
-      );
-      await rename(`./data/${searchParamsUrl.get('id')}`, `./data/${searchParamsBody.get('title')}`);
-      
-      response.writeHead(302, {Location: `/?id=${searchParamsBody.get('title')}`});
-      response.end();
+      if (formSearchParams.get('title') !== '') {
+        let topicUpdateForm: TopicUpdateForm = {
+          topic_id: id,
+          title: formSearchParams.get('title') as string,
+          description: formSearchParams.get('description') ?? '',
+        };
+
+        try {
+          await updateTopic(topicUpdateForm);
+          console.log('topic UPDATE 성공');
+
+          response.writeHead(302, {Location: `/?id=${id}`});
+          response.end();
+        } catch (err) {
+          response.statusCode = 400;
+          response.end(err);
+        }
+      }
     });
   } else if (pathName === '/delete' && method === 'POST') {
     let body = '';

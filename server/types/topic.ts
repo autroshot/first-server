@@ -1,6 +1,6 @@
 import { RowDataPacket } from "mysql2";
 
-export interface Topic extends RowDataPacket {
+export interface TopicRowDataPacket extends RowDataPacket {
   topic_id: number;
   title: string;
   description: string;
@@ -9,6 +9,12 @@ export interface Topic extends RowDataPacket {
 }
 
 export interface TopicCreateForm {
+  title: string;
+  description: string;
+}
+
+export interface TopicUpdateForm {
+  topic_id: number;
   title: string;
   description: string;
 }

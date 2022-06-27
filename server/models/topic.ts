@@ -37,7 +37,7 @@ export async function updateTopic(newTopic: TopicUpdateForm) {
     [newTopic.title, 
       newTopic.description, 
       oldTopic.topic_created_date, 
-      oldTopic.author_id, 
+      newTopic.author_id, 
       oldTopic.topic_id]);
 
   return promise;

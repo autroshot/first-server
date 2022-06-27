@@ -18,4 +18,5 @@ export interface TopicUpdateForm {
   topic_id: number;
   title: string;
   description: string;
+  author_id: number;
 }

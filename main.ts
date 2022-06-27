@@ -98,6 +98,7 @@ const server = http.createServer(async (request, response) => {
           topic_id: id,
           title: formSearchParams.get('title') as string,
           description: formSearchParams.get('description') ?? '',
+          author_id: +(formSearchParams.get('author_id') as string),
         };
 
         try {
